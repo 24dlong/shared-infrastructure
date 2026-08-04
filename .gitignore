@@ -1,0 +1,23 @@
+# Terraform
+**/.terraform/*
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# Never commit variable files that may contain environment-specific or
+# sensitive values.
+*.tfvars
+*.tfvars.json
+
+# Editors / OS
+.DS_Store
+.vscode/*
+!.vscode/settings.json

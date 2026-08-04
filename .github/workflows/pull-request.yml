@@ -1,0 +1,54 @@
+name: Pull Request Workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    name: Quality Gate | Core
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v7
+
+      - uses: 24dlong/github-actions-library/actions/quality-gate@v3
+
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      production: ${{ steps.filter.outputs.production }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            production:
+              - 'production/**'
+              - '.github/workflows/pull-request.yml'
+
+  plan:
+    needs: changes
+    if: needs.changes.outputs.production == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+      actions: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: 24dlong/github-actions-library/actions/terraform/plan@v3
+        with:
+          working-directory: production
+          aws-role-to-assume: ${{ vars.AWS_ROLE_ARN_PLAN }}
+          aws-region: us-east-2
+          github-token: ${{ secrets.GITHUB_TOKEN }}

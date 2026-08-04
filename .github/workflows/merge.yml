@@ -1,0 +1,53 @@
+name: Merge Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    name: Quality Gate | Core
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v7
+
+      - uses: 24dlong/github-actions-library/actions/quality-gate@v3
+
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      production: ${{ steps.filter.outputs.production }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            production:
+              - 'production/**'
+              - '.github/workflows/merge.yml'
+
+  apply:
+    needs: changes
+    if: needs.changes.outputs.production == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
+      pull-requests: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: 24dlong/github-actions-library/actions/terraform/apply@v3
+        with:
+          working-directory: production
+          aws-role-to-assume: ${{ vars.AWS_ROLE_ARN_APPLY }}
+          aws-region: us-east-2
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          plan-workflow-file: pull-request.yml

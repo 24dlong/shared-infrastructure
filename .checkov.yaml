@@ -1,0 +1,4 @@
+quiet: true
+compact: true
+skip-check:
+  - CKV_TF_1 # Module sources are intentionally pinned to immutable release tags.

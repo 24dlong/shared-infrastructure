@@ -1,0 +1,28 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+    -   id: check-added-large-files
+    -   id: check-merge-conflict
+-   repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.2.2
+    hooks:
+      - id: commitizen
+        stages:
+          - commit-msg
+-   repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.99.4
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+        args:
+          - --hook-config=--retry-once-with-cleanup=true
+          - --hook-config=--tf-init-args=-backend=false
+      - id: terraform_checkov
+        args:
+          - --args=--quiet
+          - --args=--compact
+          - --args=--config-file=__GIT_WORKING_DIR__/.checkov.yaml
