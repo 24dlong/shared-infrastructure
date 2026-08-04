@@ -19,10 +19,14 @@ jobs:
       - uses: 24dlong/github-actions-library/actions/quality-gate@v3
 
   changes:
+    needs: quality-gate
     runs-on: ubuntu-latest
     outputs:
       production: ${{ steps.filter.outputs.production }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - uses: dorny/paths-filter@v3
         id: filter
         with:
