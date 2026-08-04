@@ -19,6 +19,8 @@ jobs:
       - uses: 24dlong/github-actions-library/actions/quality-gate@v3
 
   changes:
+    name: Identify Changed Environments
+    needs: quality-gate
     runs-on: ubuntu-latest
     outputs:
       production: ${{ steps.filter.outputs.production }}
@@ -32,6 +34,7 @@ jobs:
               - '.github/workflows/merge.yml'
 
   apply:
+    name: Apply Changes
     needs: changes
     if: needs.changes.outputs.production == 'true'
     runs-on: ubuntu-latest

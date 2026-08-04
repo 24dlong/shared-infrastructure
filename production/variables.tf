@@ -11,15 +11,19 @@ variable "name_prefix" {
 }
 
 variable "github_org" {
-  description = "GitHub org/user allowed to assume this deployment role."
+  # GitHub has enabled immutable OIDC subject claims for this repo, so the
+  # `sub` claim embeds the org's numeric ID (repo:ORG@ORG_ID/REPO@REPO_ID:...).
+  # See https://docs.github.com/en/actions/reference/security/oidc#immutable-subject-claims
+  description = "GitHub org/user (with immutable ID) allowed to assume this deployment role."
   type        = string
-  default     = "24dlong"
+  default     = "24dlong@24920691"
 }
 
 variable "github_repo" {
-  description = "GitHub repository allowed to assume this deployment role."
+  # See note on github_org above re: immutable subject claim IDs.
+  description = "GitHub repository (with immutable ID) allowed to assume this deployment role."
   type        = string
-  default     = "24dlong-shared-infrastructure"
+  default     = "shared-infrastructure@1323258551"
 }
 
 variable "github_branch" {
