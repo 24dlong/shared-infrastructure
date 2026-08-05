@@ -19,6 +19,7 @@ jobs:
       - uses: 24dlong/github-actions-library/actions/quality-gate@v3
 
   changes:
+    name: Identify Changed Environments
     needs: quality-gate
     runs-on: ubuntu-latest
     permissions:
@@ -38,6 +39,7 @@ jobs:
               - '.github/workflows/pull-request.yml'
 
   plan:
+    name: Plan Changes
     needs: changes
     if: needs.changes.outputs.production == 'true'
     runs-on: ubuntu-latest

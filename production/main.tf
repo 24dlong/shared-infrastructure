@@ -24,7 +24,7 @@ data "aws_iam_policy_document" "planner" {
       "s3:GetObject"
     ]
     resources = [
-      "arn:aws:s3:::${var.state_bucket_name}/shared-infrastructure/production/*"
+      "arn:aws:s3:::${var.state_bucket_name}/24dlong-shared-infrastructure/production/*"
     ]
   }
 
@@ -49,7 +49,8 @@ data "aws_iam_policy_document" "planner" {
       "iam:GetRolePolicy"
     ]
     resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.name_prefix}-github-oidc-role"
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.name_prefix}-github-oidc-role",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.name_prefix}-plan-github-oidc-role"
     ]
   }
 
@@ -86,7 +87,7 @@ data "aws_iam_policy_document" "deployer" {
       "s3:DeleteObject"
     ]
     resources = [
-      "arn:aws:s3:::${var.state_bucket_name}/shared-infrastructure/production/*"
+      "arn:aws:s3:::${var.state_bucket_name}/24dlong-shared-infrastructure/production/*"
     ]
   }
 
@@ -115,7 +116,7 @@ data "aws_iam_policy_document" "deployer" {
     resources = ["*"]
   }
 
-  #checkov:skip=CKV_AWS_109: role management actions are already scoped to a single named role ARN below; broader IAM permission management is not granted.
+  #checkov:skip=CKV_AWS_109: role management actions are already scoped to two named role ARNs below; broader IAM permission management is not granted.
   statement {
     sid    = "ManageGithubOidcRole"
     effect = "Allow"
@@ -131,10 +132,12 @@ data "aws_iam_policy_document" "deployer" {
       "iam:PutRolePolicy",
       "iam:DeleteRolePolicy",
       "iam:ListAttachedRolePolicies",
-      "iam:ListRolePolicies"
+      "iam:ListRolePolicies",
+      "iam:GetRolePolicy"
     ]
     resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.name_prefix}-github-oidc-role"
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.name_prefix}-github-oidc-role",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.name_prefix}-plan-github-oidc-role"
     ]
   }
 }
