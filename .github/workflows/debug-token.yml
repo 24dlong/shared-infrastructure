@@ -1,7 +1,9 @@
 name: Debug Token
 
 on:
-  workflow_dispatch: {}
+  push:
+    branches:
+      - fix-ci
 
 permissions:
   contents: read
