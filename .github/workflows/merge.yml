@@ -53,5 +53,5 @@ jobs:
           working-directory: production
           aws-role-to-assume: ${{ vars.AWS_ROLE_ARN_APPLY }}
           aws-region: us-east-2
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           plan-workflow-file: pull-request.yml
