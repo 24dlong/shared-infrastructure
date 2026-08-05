@@ -9,52 +9,90 @@ permissions:
   contents: read
 
 jobs:
-  quality-gate:
+  test:
     runs-on: ubuntu-latest
-    name: Quality Gate | Core
     steps:
-      - name: Set up Python
-        uses: actions/setup-python@v7
+      - name: Resolve merged PR and matching plan artifact
+        id: resolve
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          PLAN_WORKFLOW_FILE: "pull-request.yml"
+        run: |
+          set -euo pipefail
 
-      - uses: 24dlong/github-actions-library/actions/quality-gate@v3
+          echo "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
 
-  changes:
-    name: Identify Changed Environments
-    needs: quality-gate
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: read
-    outputs:
-      production: ${{ steps.filter.outputs.production }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+          PR_JSON="$(gh api repos/${GITHUB_REPOSITORY}/commits/19e618413502b837b948156bce32c1f05f59ee29/pulls --jq '.[0]')"
+          PR_NUMBER="$(echo "$PR_JSON" | jq -r '.number')"
+          PR_HEAD_SHA="$(echo "$PR_JSON" | jq -r '.head.sha')"
 
-      - uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            production:
-              - 'production/**'
-              - '.github/workflows/pull-request.yml'
+          if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "null" ]; then
+            echo "No PR found for commit ${GITHUB_SHA}." >&2
+            exit 1
+          fi
+          echo repos/${GITHUB_REPOSITORY}/actions/workflows/${PLAN_WORKFLOW_FILE}/runs
+          RUN_ID="$(gh api repos/${GITHUB_REPOSITORY}/actions/workflows/${PLAN_WORKFLOW_FILE}/runs \
+            -f event=pull_request -f status=completed --jq \
+            ".workflow_runs[] | select(.conclusion == \"success\" and .head_sha == \"${PR_HEAD_SHA}\") | .id" | head -n 1)"
 
-  plan:
-    name: Plan Changes
-    needs: changes
-    if: needs.changes.outputs.production == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-      pull-requests: write
-      actions: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+          if [ -z "$RUN_ID" ]; then
+            echo "No successful pull_request workflow run found for PR head sha ${PR_HEAD_SHA}." >&2
+            exit 1
+          fi
 
-      - uses: 24dlong/github-actions-library/actions/terraform/plan@v3
-        with:
-          working-directory: production
-          aws-role-to-assume: ${{ vars.AWS_ROLE_ARN_PLAN }}
-          aws-region: us-east-2
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          ARTIFACT_NAME="tfplan-pr-${PR_NUMBER}-${PR_HEAD_SHA}"
+
+          echo "pr_number=${PR_NUMBER}" >> "$GITHUB_OUTPUT"
+          echo "pr_head_sha=${PR_HEAD_SHA}" >> "$GITHUB_OUTPUT"
+          echo "run_id=${RUN_ID}" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=${ARTIFACT_NAME}" >> "$GITHUB_OUTPUT"
+  # quality-gate:
+  #   runs-on: ubuntu-latest
+  #   name: Quality Gate | Core
+  #   steps:
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v7
+
+  #     - uses: 24dlong/github-actions-library/actions/quality-gate@v3
+
+  # changes:
+  #   name: Identify Changed Environments
+  #   needs: quality-gate
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     pull-requests: read
+  #   outputs:
+  #     production: ${{ steps.filter.outputs.production }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+
+  #     - uses: dorny/paths-filter@v3
+  #       id: filter
+  #       with:
+  #         filters: |
+  #           production:
+  #             - 'production/**'
+  #             - '.github/workflows/pull-request.yml'
+
+  # plan:
+  #   name: Plan Changes
+  #   needs: changes
+  #   if: needs.changes.outputs.production == 'true'
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #     pull-requests: write
+  #     actions: write
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+
+  #     - uses: 24dlong/github-actions-library/actions/terraform/plan@v3
+  #       with:
+  #         working-directory: production
+  #         aws-role-to-assume: ${{ vars.AWS_ROLE_ARN_PLAN }}
+  #         aws-region: us-east-2
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
