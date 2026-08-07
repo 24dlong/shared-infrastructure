@@ -3,6 +3,11 @@ output "state_bucket_name" {
   value       = var.state_bucket_name
 }
 
+output "tags" {
+  description = "Common tags applied to shared-foundation resources, for downstream consumers to merge into their own resource tags."
+  value       = var.tags
+}
+
 output "state_bucket_region" {
   description = "Region of the shared S3 state bucket."
   value       = var.aws_region
