@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v7
 
-      - uses: 24dlong/github-actions-library/actions/quality-gate@v3
+      - uses: 24dlong/github-actions-library/actions/quality-gate@v4
 
   changes:
     name: Identify Changed Environments
@@ -49,10 +49,7 @@ jobs:
       pull-requests: write
       actions: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - uses: 24dlong/github-actions-library/actions/terraform/plan@v3
+      - uses: 24dlong/github-actions-library/actions/terraform/plan@v4
         with:
           working-directory: production
           aws-role-to-assume: ${{ vars.AWS_ROLE_ARN_PLAN }}
