@@ -1,8 +1,8 @@
-.PHONY: setup-lint lint fmt validate checkov
+.PHONY: setup-env lint fmt validate checkov
 
 TERRAFORM_DIRS := bootstrap production
 
-setup-lint:
+setup-env:
 	command -v mise >/dev/null 2>&1 || curl https://mise.run | sh
 	mise install
 	mise exec -- pre-commit install
