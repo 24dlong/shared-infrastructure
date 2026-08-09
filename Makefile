@@ -1,6 +1,6 @@
 .PHONY: setup-env lint fmt validate checkov
 
-TERRAFORM_DIRS := bootstrap production
+TERRAFORM_DIRS := bootstrap infra
 
 setup-env:
 	command -v mise >/dev/null 2>&1 || curl https://mise.run | sh
@@ -24,4 +24,4 @@ validate:
 	done
 
 checkov:
-	checkov -d bootstrap -d production --config-file .checkov.yaml
+	checkov -d bootstrap -d infra --config-file .checkov.yaml

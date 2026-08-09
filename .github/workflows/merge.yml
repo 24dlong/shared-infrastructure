@@ -1,9 +1,18 @@
 name: Merge Workflow
 
+# Standard merge pipeline: quality gate + version creation, then request a
+# deployment of the lowest environment (production) by opening a PR that
+# bumps its environments/<env>/deployed.json. Actual terraform plan/apply
+# happens in pull-request-deploy.yml / merge-deploy.yml once that PR is
+# opened/merged. See /ARCHITECTURE.md.
+
 on:
   push:
     branches:
       - main
+    paths:
+      - 'infra/**'
+      - '.github/workflows/merge.yml'
 
 permissions:
   contents: read
@@ -13,44 +22,30 @@ jobs:
     runs-on: ubuntu-latest
     name: Quality Gate | Core
     steps:
-      - name: Set up Python
-        uses: actions/setup-python@v7
-
       - uses: 24dlong/github-actions-library/actions/quality-gate@v4
 
-  changes:
-    name: Identify Changed Environments
+  publish:
+    name: Create Version
     needs: quality-gate
     runs-on: ubuntu-latest
-    outputs:
-      production: ${{ steps.filter.outputs.production }}
+    permissions:
+      contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - uses: dorny/paths-filter@v4
-        id: filter
+      - uses: 24dlong/github-actions-library/actions/publish@v4
         with:
-          filters: |
-            production:
-              - 'production/**'
-              - '.github/workflows/merge.yml'
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-  apply:
-    name: Apply Changes
-    needs: changes
-    if: needs.changes.outputs.production == 'true'
+  request-deployment:
+    name: Request Deployment
+    needs: [publish]
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
-      contents: read
-      actions: read
-      pull-requests: read
+      contents: write
+      pull-requests: write
     steps:
-      - uses: 24dlong/github-actions-library/actions/terraform/apply@v4
+      - uses: 24dlong/github-actions-library/actions/terraform/deployment-pr@v4
         with:
-          working-directory: production
-          aws-role-to-assume: ${{ vars.AWS_ROLE_ARN_APPLY }}
-          aws-region: us-east-2
-          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          plan-workflow-file: pull-request.yml
+          environment: production
+          ref: ${{ steps.publish.outputs.version }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-branch: main

@@ -1,0 +1,31 @@
+name: Deploy Apply Workflow
+
+# Thin wrapper: trigger only. Detect, fan-out, GitHub Environment vars, and
+# terraform apply live in github-actions-library terraform-deploy.yml.
+# Adding an environment is environments/<env>/deployed.json plus a GitHub
+# Environment named <env> — no changes here.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "environments/**/deployed.json"
+
+permissions:
+  contents: read
+
+jobs:
+  apply:
+    uses: 24dlong/github-actions-library/.github/workflows/terraform-deploy.yml@v4
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
+      pull-requests: read
+    secrets:
+      github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+    with:
+      command: apply
+      working-directory: infra
+      plan-workflow-file: pull-request-deploy.yml

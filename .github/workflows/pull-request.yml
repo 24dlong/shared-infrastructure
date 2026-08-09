@@ -1,5 +1,9 @@
 name: Pull Request Workflow
 
+# Standard PR pipeline: quality gate only. Terraform plan/apply for infra/
+# is handled exclusively by pull-request-deploy.yml / merge-deploy.yml,
+# triggered by changes to environments/**/deployed.json. See /ARCHITECTURE.md.
+
 on:
   pull_request:
     branches:
@@ -13,45 +17,4 @@ jobs:
     runs-on: ubuntu-latest
     name: Quality Gate | Core
     steps:
-      - name: Set up Python
-        uses: actions/setup-python@v7
-
       - uses: 24dlong/github-actions-library/actions/quality-gate@v4
-
-  changes:
-    name: Identify Changed Environments
-    needs: quality-gate
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: read
-    outputs:
-      production: ${{ steps.filter.outputs.production }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - uses: dorny/paths-filter@v4
-        id: filter
-        with:
-          filters: |
-            production:
-              - 'production/**'
-              - '.github/workflows/pull-request.yml'
-
-  plan:
-    name: Plan Changes
-    needs: changes
-    if: needs.changes.outputs.production == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-      pull-requests: write
-      actions: write
-    steps:
-      - uses: 24dlong/github-actions-library/actions/terraform/plan@v4
-        with:
-          working-directory: production
-          aws-role-to-assume: ${{ vars.AWS_ROLE_ARN_PLAN }}
-          aws-region: us-east-2
-          github-token: ${{ secrets.GITHUB_TOKEN }}

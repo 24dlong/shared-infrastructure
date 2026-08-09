@@ -24,7 +24,7 @@ data "aws_iam_policy_document" "planner" {
       "s3:GetObject"
     ]
     resources = [
-      "arn:aws:s3:::${var.state_bucket_name}/24dlong-shared-infrastructure/production/*"
+      "arn:aws:s3:::${var.state_bucket_name}/${var.state_key_prefix}/*"
     ]
   }
 
@@ -87,7 +87,7 @@ data "aws_iam_policy_document" "deployer" {
       "s3:DeleteObject"
     ]
     resources = [
-      "arn:aws:s3:::${var.state_bucket_name}/24dlong-shared-infrastructure/production/*"
+      "arn:aws:s3:::${var.state_bucket_name}/${var.state_key_prefix}/*"
     ]
   }
 
