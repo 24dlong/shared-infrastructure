@@ -30,8 +30,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      version: ${{ steps.publish.outputs.version }}
     steps:
-      - uses: 24dlong/github-actions-library/actions/publish@v4
+      - id: publish
+        uses: 24dlong/github-actions-library/actions/publish@v4
         with:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
@@ -46,6 +49,6 @@ jobs:
       - uses: 24dlong/github-actions-library/actions/terraform/deployment-pr@v4
         with:
           environment: production
-          ref: ${{ steps.publish.outputs.version }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ needs.publish.outputs.version }}
+          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           base-branch: main
