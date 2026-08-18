@@ -10,8 +10,16 @@ This repository currently manages only:
 
 ## Layout
 
-- `bootstrap/`: one-time creation of the shared S3 state bucket.
-- `production/`: persistent shared foundation resources (OIDC provider and IAM roles).
+- `bootstrap/`: reusable, one-time-per-environment creation of that
+  environment's own S3 state bucket.
+- `infra/`: the single Terraform root applied to every environment (OIDC
+  provider and IAM roles). One copy of the code, applied N times with
+  different inputs — never copied per environment.
+- `environments/<env>/`: per-environment docs and the `deployed.json`
+  desired-state file that drives that environment's plan/apply pipeline.
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full multi-environment
+model, how deploys are triggered, and how to add a new environment.
 
 ## Consuming this foundation's outputs
 
@@ -43,7 +51,7 @@ module "github_oidc" {
 }
 ```
 
-**Currently published outputs** (see `production/outputs.tf` for the source
+**Currently published outputs** (see `infra/outputs.tf` for the source
 of truth):
 
 | Output | Description |

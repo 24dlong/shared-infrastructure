@@ -26,15 +26,24 @@ terraform {
 
 After step 5, this root should continue to use S3 state.
 
-## Production first apply
+## First apply for a new environment
 
-The OIDC roles do not exist yet. First apply must run locally with your own
-AWS credentials:
+This directory is reusable per environment/account: run it once for each new
+account with that account's own AWS credentials and inputs (e.g.
+`-var name_prefix=... -var aws_region=...`), following the same local-state
+→ migrate-to-S3 flow above.
 
-1. `cd production`
-2. `terraform init`
-3. `terraform apply`
+The OIDC roles created by `infra/` do not exist yet on first run for a new
+environment. First apply must run locally with your own AWS credentials:
 
-After this succeeds, run `terraform output` and set repository variables for workflows:
+1. `cd infra`
+2. `terraform init -backend-config="bucket=<STATE_BUCKET>" -backend-config="key=<STATE_KEY>" -backend-config="region=<STATE_REGION>" -backend-config="use_lockfile=true"`
+3. `terraform apply` (with `-var`/`TF_VAR_*` overrides for this environment)
+
+After this succeeds, run `terraform output` and set that environment's
+GitHub Environment variables:
 - `AWS_ROLE_ARN_PLAN` = output `shared_infrastructure_plan_role_arn`
 - `AWS_ROLE_ARN_APPLY` = output `shared_infrastructure_deploy_role_arn`
+- `STATE_BUCKET` / `STATE_KEY` / `STATE_REGION` = the backend-config values used above
+
+See `/ARCHITECTURE.md` for the full "add a new environment" runbook.

@@ -1,0 +1,31 @@
+name: Plan Changes Workflow
+
+# Thin wrapper: trigger only. Detect, fan-out, GitHub Environment vars, and
+# terraform plan live in github-actions-library terraform-deploy.yml.
+# Adding an environment is environments/<env>/deployed.json plus a GitHub
+# Environment named <env> — no changes here.
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "environments/**/deployed.json"
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    name: Plan Changes
+    uses: 24dlong/github-actions-library/.github/workflows/terraform-deploy.yml@v4
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+      actions: write
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      command: plan
+      working-directory: infra

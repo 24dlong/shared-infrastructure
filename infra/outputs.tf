@@ -1,5 +1,5 @@
 output "state_bucket_name" {
-  description = "Shared S3 state bucket used by production root."
+  description = "Shared S3 state bucket used by this environment."
   value       = var.state_bucket_name
 }
 

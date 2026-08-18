@@ -1,11 +1,11 @@
 variable "aws_region" {
-  description = "AWS region used for production shared-foundation resources."
+  description = "AWS region used for this environment's shared-foundation resources."
   type        = string
   default     = "us-east-2"
 }
 
 variable "name_prefix" {
-  description = "Prefix used to name production shared-foundation resources."
+  description = "Prefix used to name this environment's shared-foundation resources."
   type        = string
   default     = "24dlong-shared-infrastructure-prod"
 }
@@ -33,9 +33,22 @@ variable "github_branch" {
 }
 
 variable "state_bucket_name" {
-  description = "Terraform state bucket name created by bootstrap."
+  description = "Terraform state bucket name created by bootstrap for this environment's account."
   type        = string
   default     = "24dlong-shared-infrastructure-prod-terraform-state"
+}
+
+variable "state_key_prefix" {
+  description = <<-EOT
+    Key prefix (within the state bucket) under which this environment's own
+    Terraform state objects live. Used to scope the deployer/planner IAM
+    policies to only this environment's own state path. Differs per
+    environment only if multiple environments ever share one bucket; today
+    each environment has its own account/bucket, so this mainly documents
+    the convention.
+  EOT
+  type        = string
+  default     = "24dlong-shared-infrastructure/production"
 }
 
 variable "tags" {
