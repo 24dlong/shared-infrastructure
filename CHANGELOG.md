@@ -1,3 +1,8 @@
+## 0.1.1 (2026-08-18)
+
+
+- fix: fix version output in merge workflow (#16)
+
 ## 0.1.0 (2026-08-18)
 
 
