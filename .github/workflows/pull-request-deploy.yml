@@ -1,4 +1,4 @@
-name: Deploy Plan Workflow
+name: Plan Changes Workflow
 
 # Thin wrapper: trigger only. Detect, fan-out, GitHub Environment vars, and
 # terraform plan live in github-actions-library terraform-deploy.yml.
@@ -17,6 +17,7 @@ permissions:
 
 jobs:
   plan:
+    name: Plan Changes
     uses: 24dlong/github-actions-library/.github/workflows/terraform-deploy.yml@v4
     permissions:
       id-token: write
