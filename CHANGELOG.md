@@ -1,3 +1,11 @@
+## 0.1.2 (2026-08-20)
+
+
+- fix: add explicit tf vars and remove defaults (#20)
+- ci: add missing merge-deploy permissions (#18)
+- chore(deploy): request production deploy of d902bf7 (#17)
+- Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
 ## 0.1.1 (2026-08-18)
 
 
