@@ -12,11 +12,6 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-# Never commit variable files that may contain environment-specific or
-# sensitive values.
-*.tfvars
-*.tfvars.json
-
 # Editors / OS
 .DS_Store
 .vscode/*

@@ -38,7 +38,9 @@ environment. First apply must run locally with your own AWS credentials:
 
 1. `cd infra`
 2. `terraform init -backend-config="bucket=<STATE_BUCKET>" -backend-config="key=<STATE_KEY>" -backend-config="region=<STATE_REGION>" -backend-config="use_lockfile=true"`
-3. `terraform apply` (with `-var`/`TF_VAR_*` overrides for this environment)
+3. `terraform apply -var-file=../environments/<env>/terraform.tfvars` (create
+   that file first with this environment's overrides — see
+   `../environments/production/terraform.tfvars` for the shape)
 
 After this succeeds, run `terraform output` and set that environment's
 GitHub Environment variables:

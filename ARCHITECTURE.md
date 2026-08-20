@@ -38,8 +38,9 @@ bootstrap/                    # reusable, one-time-per-environment tooling
 environments/
   production/
     README.md                 # this environment's account/region/bucket/key/role facts
+    terraform.tfvars           # Terraform variable overrides for this environment
     deployed.json              # desired-state record: the ref/sha this environment should run
-  # staging/, uat/, etc. added later — same two files, no new Terraform code
+  # staging/, uat/, etc. added later — same three files, no new Terraform code
 
 .github/workflows/
   pull-request.yml            # standard PR pipeline: quality-gate only
@@ -67,9 +68,32 @@ environment applies the *same* `infra/` code; the only things that differ
 per environment are:
 - **Backend configuration** (bucket, key, region) — supplied at `terraform
   init` time, never hardcoded in `infra/`.
-- **Variable values** — supplied via `TF_VAR_*` env vars (CI) or `-var`/
-  `-var-file` (local); `infra/variables.tf`'s defaults describe `production`
-  today, and only the deltas need overriding for a new environment.
+- **Variable values** — supplied via `environments/<env>/terraform.tfvars`
+  (CI, via `-var-file`) or `-var-file`/`-var` (local); `infra/variables.tf`'s
+  defaults describe `production` today, and only the deltas need overriding
+  for a new environment.
+
+## Where environment values live
+
+Not every per-environment value belongs in the same place. The dividing
+line is whether a value shows up in the `terraform plan` diff before it
+takes effect:
+
+- **Shows up in the plan** (`environments/<env>/terraform.tfvars`): ordinary
+  Terraform variables — `name_prefix`, `github_org`/`github_repo`/
+  `github_branch`, `state_bucket_name`, `state_key_prefix`, `tags`, etc. A
+  change here is visible in the PR's plan comment before it's ever applied,
+  so a normal PR review is a sufficient safety net. It's a git file: any
+  approved PR can change it.
+- **Takes effect before any plan exists** (GitHub Environment variables,
+  admin-gated): `STATE_BUCKET` / `STATE_KEY` / `STATE_REGION` (which state
+  file gets written) and `AWS_ROLE_ARN_PLAN` / `AWS_ROLE_ARN_APPLY` (which
+  AWS identity CI assumes). Both are resolved during `terraform init` /
+  credential setup, before `terraform plan` runs, so there's no plan diff to
+  review. Changing them requires GitHub Environment/repo admin access, not
+  just a PR approval — appropriate, since misdirecting either one could
+  write to (or assume a role scoped to) the wrong environment with no
+  PR-visible warning.
 
 ## Environment isolation
 
@@ -109,9 +133,12 @@ Environments → e.g. `production`), holding:
   ARNs (already supported today; this is what selects which AWS account a
   job authenticates into).
 - `STATE_BUCKET`, `STATE_KEY`, `STATE_REGION` — backend-config values.
-- Any `TF_VAR_*` values that differ from `infra/variables.tf` defaults.
 - Optionally, required reviewers (useful for upper environments, gating the
   apply job before it runs).
+
+Terraform variable overrides do **not** go here — see
+`environments/<env>/terraform.tfvars` below and "Where environment values
+live" above.
 
 ## The GitOps deployment trigger: `deployed.json`
 
@@ -200,21 +227,25 @@ are independent.
 1. Create/obtain a new, separate AWS account for `staging`.
 2. Run `bootstrap/` once against that account (see `bootstrap/README.md`) to
    create its own state bucket.
-3. Run `infra/` once locally against that account (manual first apply, same
+3. Add `environments/staging/terraform.tfvars` with the values that differ
+   from the `production` defaults (e.g. `name_prefix`, `state_bucket_name`,
+   `state_key_prefix`).
+4. Run `infra/` once locally against that account (manual first apply, same
    chicken-and-egg reasoning as `production`'s original bootstrap) to create
-   its OIDC provider and IAM roles. Override any `TF_VAR_*` values that
-   differ from the `production` defaults (e.g. `name_prefix`,
-   `state_bucket_name`, `state_key_prefix`).
-4. In GitHub repo Settings → Environments, create a `staging` Environment
+   its OIDC provider and IAM roles, using
+   `terraform apply -var-file=../environments/staging/terraform.tfvars`.
+5. In GitHub repo Settings → Environments, create a `staging` Environment
    with its own `AWS_ROLE_ARN_PLAN` / `AWS_ROLE_ARN_APPLY` / `STATE_BUCKET` /
-   `STATE_KEY` / `STATE_REGION` (from step 3's outputs), plus any
-   `TF_VAR_*` overrides. Optionally add required reviewers.
-5. Add `environments/staging/README.md` (facts) and
+   `STATE_KEY` / `STATE_REGION` (from step 4's outputs). Optionally add
+   required reviewers.
+6. Add `environments/staging/README.md` (facts) and
    `environments/staging/deployed.json` (seed with the current
    `production` sha, or leave for the first promotion to set).
    The directory name must match the GitHub Environment name. No workflow
-   edits: the library GitOps deploy workflow auto-detects the new file.
-6. Build a `promote.yml` workflow (out of scope for this document's current
+   edits: the library GitOps deploy workflow auto-detects the new
+   `deployed.json` and passes `-var-file=environments/staging/terraform.tfvars`
+   automatically.
+7. Build a `promote.yml` workflow (out of scope for this document's current
    revision) that, on release/tag publish, calls the `deployment-pr`
    composite action with `environment: staging` and the released ref. The
    existing deploy workflows will plan/apply that sha's `infra/`, even if

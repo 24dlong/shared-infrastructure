@@ -38,7 +38,10 @@ workflow (called from `.github/workflows/pull-request-deploy.yml` and
 ## Variables
 
 Any variable in `variables.tf` can be overridden per environment via
-`TF_VAR_<name>` (CI) or `-var`/`-var-file` (local). Defaults match the
-current `production` environment; new environments only need to override
-what actually differs (e.g. `name_prefix`, `state_bucket_name`,
-`state_key_prefix`).
+`environments/<env>/terraform.tfvars` (CI, passed automatically as
+`-var-file` by the library GitOps deploy workflow) or `-var-file`/`-var`
+(local). Defaults match the current `production` environment; new
+environments only need to override what actually differs (e.g.
+`name_prefix`, `state_bucket_name`, `state_key_prefix`). See
+`/ARCHITECTURE.md`'s "Where environment values live" for why this is a git
+file rather than a GitHub Environment variable.

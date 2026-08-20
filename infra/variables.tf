@@ -1,13 +1,11 @@
 variable "aws_region" {
   description = "AWS region used for this environment's shared-foundation resources."
   type        = string
-  default     = "us-east-2"
 }
 
 variable "name_prefix" {
   description = "Prefix used to name this environment's shared-foundation resources."
   type        = string
-  default     = "24dlong-shared-infrastructure-prod"
 }
 
 variable "github_org" {
@@ -16,14 +14,12 @@ variable "github_org" {
   # See https://docs.github.com/en/actions/reference/security/oidc#immutable-subject-claims
   description = "GitHub org/user (with immutable ID) allowed to assume this deployment role."
   type        = string
-  default     = "24dlong@24920691"
 }
 
 variable "github_repo" {
   # See note on github_org above re: immutable subject claim IDs.
   description = "GitHub repository (with immutable ID) allowed to assume this deployment role."
   type        = string
-  default     = "shared-infrastructure@1323258551"
 }
 
 variable "github_branch" {
@@ -35,7 +31,6 @@ variable "github_branch" {
 variable "state_bucket_name" {
   description = "Terraform state bucket name created by bootstrap for this environment's account."
   type        = string
-  default     = "24dlong-shared-infrastructure-prod-terraform-state"
 }
 
 variable "state_key_prefix" {
@@ -48,15 +43,9 @@ variable "state_key_prefix" {
     the convention.
   EOT
   type        = string
-  default     = "24dlong-shared-infrastructure/production"
 }
 
 variable "tags" {
   description = "Common tags applied to resources."
   type        = map(string)
-  default = {
-    Project     = "24dlong-shared-infrastructure"
-    Environment = "production"
-    ManagedBy   = "terraform"
-  }
 }
