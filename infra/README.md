@@ -6,7 +6,7 @@ directory holds the one and only definition of this account family's
 shared-foundation resources:
 
 - GitHub Actions OIDC provider (`token.actions.githubusercontent.com`)
-- Repo/branch-scoped deploy + plan IAM roles for `24dlong/shared-infrastructure`
+- Repo/environment-scoped deploy + plan IAM roles for `24dlong/shared-infrastructure`
 
 Differences between environments (separate AWS account, state bucket/key,
 any future sizing/tuning) are supplied entirely through Terraform variables
