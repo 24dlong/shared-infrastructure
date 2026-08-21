@@ -1,3 +1,10 @@
+## 0.1.3 (2026-08-21)
+
+
+- fix: add missing OIDC permissions to fix apply (#22)
+- chore(deploy): request production deploy of 1361675 (#21)
+- Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
 ## 0.1.2 (2026-08-20)
 
 
