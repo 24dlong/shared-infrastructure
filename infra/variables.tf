@@ -1,3 +1,12 @@
+variable "environment" {
+  description = <<-EOT
+    GitHub Environment whose jobs may assume this environment's plan and
+    apply roles (`repo:<org>/<repo>:environment:<name>`). Must match the
+    GitHub Environment name used by terraform-deploy.yml (environments/<env>/).
+  EOT
+  type        = string
+}
+
 variable "aws_region" {
   description = "AWS region used for this environment's shared-foundation resources."
   type        = string
@@ -6,26 +15,6 @@ variable "aws_region" {
 variable "name_prefix" {
   description = "Prefix used to name this environment's shared-foundation resources."
   type        = string
-}
-
-variable "github_org" {
-  # GitHub has enabled immutable OIDC subject claims for this repo, so the
-  # `sub` claim embeds the org's numeric ID (repo:ORG@ORG_ID/REPO@REPO_ID:...).
-  # See https://docs.github.com/en/actions/reference/security/oidc#immutable-subject-claims
-  description = "GitHub org/user (with immutable ID) allowed to assume this deployment role."
-  type        = string
-}
-
-variable "github_repo" {
-  # See note on github_org above re: immutable subject claim IDs.
-  description = "GitHub repository (with immutable ID) allowed to assume this deployment role."
-  type        = string
-}
-
-variable "github_branch" {
-  description = "GitHub branch allowed to assume this deployment role."
-  type        = string
-  default     = "main"
 }
 
 variable "state_bucket_name" {

@@ -143,15 +143,18 @@ data "aws_iam_policy_document" "deployer" {
 }
 
 module "github_oidc" {
-  source = "git::https://github.com/24dlong/terraform-modules-library.git//modules/github-oidc?ref=0.3.5"
+  source = "git::https://github.com/24dlong/terraform-modules-library.git//modules/github-oidc?ref=0.4.0"
 
   name_prefix = var.name_prefix
 
   create_oidc_provider = true
-  github_org           = var.github_org
-  github_repo          = var.github_repo
-  github_branch        = var.github_branch
-  allow_all_branches   = false
+  github_org           = "24dlong@24920691"
+  github_repo          = "shared-infrastructure@1323258551"
+  # terraform-deploy.yml sets environment: <env> on the apply job, so GitHub
+  # puts environment:<name> in the OIDC sub (not the branch ref). Restrict
+  # which branches can use that Environment with GitHub Environment
+  # deployment branch rules.
+  github_environment = var.environment
 
   inline_policy_json  = data.aws_iam_policy_document.deployer.json
   managed_policy_arns = []
@@ -160,16 +163,15 @@ module "github_oidc" {
 }
 
 module "github_oidc_plan" {
-  source = "git::https://github.com/24dlong/terraform-modules-library.git//modules/github-oidc?ref=0.3.5"
+  source = "git::https://github.com/24dlong/terraform-modules-library.git//modules/github-oidc?ref=0.4.0"
 
   name_prefix = "${var.name_prefix}-plan"
 
   create_oidc_provider     = false
   github_oidc_provider_arn = module.github_oidc.oidc_provider_arn
-  github_org               = var.github_org
-  github_repo              = var.github_repo
-  github_branch            = var.github_branch
-  allow_all_branches       = true
+  github_org               = "24dlong@24920691"
+  github_repo              = "shared-infrastructure@1323258551"
+  github_environment       = var.environment
 
   inline_policy_json  = data.aws_iam_policy_document.planner.json
   managed_policy_arns = []

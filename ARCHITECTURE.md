@@ -80,11 +80,10 @@ line is whether a value shows up in the `terraform plan` diff before it
 takes effect:
 
 - **Shows up in the plan** (`environments/<env>/terraform.tfvars`): ordinary
-  Terraform variables — `name_prefix`, `github_org`/`github_repo`/
-  `github_branch`, `state_bucket_name`, `state_key_prefix`, `tags`, etc. A
-  change here is visible in the PR's plan comment before it's ever applied,
-  so a normal PR review is a sufficient safety net. It's a git file: any
-  approved PR can change it.
+  Terraform variables — `name_prefix`, `environment`, `state_bucket_name`,
+  `state_key_prefix`, `tags`, etc. A change here is visible in the PR's plan
+  comment before it's ever applied, so a normal PR review is a sufficient
+  safety net. It's a git file: any approved PR can change it.
 - **Takes effect before any plan exists** (GitHub Environment variables,
   admin-gated): `STATE_BUCKET` / `STATE_KEY` / `STATE_REGION` (which state
   file gets written) and `AWS_ROLE_ARN_PLAN` / `AWS_ROLE_ARN_APPLY` (which
