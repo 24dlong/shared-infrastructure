@@ -1,3 +1,12 @@
+## 0.1.4 (2026-08-28)
+
+
+- chore(deps): bump github workflows to v5 (#24)
+- chore(deps): update dependency checkov to v3.3.10 (#19)
+- Co-authored-by: 24dlong-renovate[bot] <286791535+24dlong-renovate[bot]@users.noreply.github.com>
+- chore(deploy): request production deploy of 97267e3 (#23)
+- Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
 ## 0.1.3 (2026-08-21)
 
 
