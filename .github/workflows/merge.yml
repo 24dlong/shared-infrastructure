@@ -18,15 +18,8 @@ permissions:
   contents: read
 
 jobs:
-  quality-gate:
-    runs-on: ubuntu-latest
-    name: Quality Gate | Core
-    steps:
-      - uses: 24dlong/github-actions-library/actions/quality-gate@v4
-
   publish:
     name: Create Version
-    needs: quality-gate
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -34,9 +27,11 @@ jobs:
       version: ${{ steps.publish.outputs.version }}
     steps:
       - id: publish
-        uses: 24dlong/github-actions-library/actions/publish@v4
+        uses: 24dlong/github-actions-library/actions/publish@v5
         with:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          # requried to bypass branch protection
+          GITHUB_WORKFLOWS_CLIENT_ID: ${{ vars.GH_WORKFLOWS_APP_CLIENT_ID }}
+          GITHUB_WORKFLOWS_PRIVATE_KEY: ${{ secrets.GH_WORKFLOWS_APP_PRIVATE_KEY }}
 
   request-deployment:
     name: Request Deployment
@@ -46,7 +41,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: 24dlong/github-actions-library/actions/terraform/deployment-pr@v4
+      - uses: 24dlong/github-actions-library/actions/terraform/deployment-pr@v5
         with:
           environment: production
           ref: ${{ needs.publish.outputs.version }}

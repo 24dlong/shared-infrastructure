@@ -18,7 +18,7 @@ permissions:
 jobs:
   apply:
     name: Apply Changes
-    uses: 24dlong/github-actions-library/.github/workflows/terraform-deploy.yml@v4
+    uses: 24dlong/github-actions-library/.github/workflows/terraform-deploy.yml@v5
     permissions:
       id-token: write
       contents: read
