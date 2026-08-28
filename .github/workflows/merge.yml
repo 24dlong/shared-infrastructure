@@ -45,5 +45,5 @@ jobs:
         with:
           environment: production
           ref: ${{ needs.publish.outputs.version }}
-          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           base-branch: main
