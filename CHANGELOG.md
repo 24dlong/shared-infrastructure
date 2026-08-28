@@ -1,3 +1,8 @@
+## 0.1.6 (2026-08-28)
+
+
+- refactor: migrate workflows to use app tokens (#26)
+
 ## 0.1.5 (2026-08-28)
 
 
