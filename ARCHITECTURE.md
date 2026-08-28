@@ -157,7 +157,7 @@ This file is the trigger, not just a log:
 - Changing it via a PR triggers `pull-request-deploy.yml`, which runs
   `terraform plan` for `infra/` against that environment.
 - Merging that PR triggers `merge-deploy.yml`, which runs `terraform apply`
-  — using the existing `terraform/apply@v4` action's built-in behavior of
+  — using the existing `terraform/apply@v5` action's built-in behavior of
   looking up the PR that was merged and replaying its saved plan artifact.
   This works because the deployed.json bump is always a real PR.
 

@@ -18,7 +18,7 @@ permissions:
 jobs:
   plan:
     name: Plan Changes
-    uses: 24dlong/github-actions-library/.github/workflows/terraform-deploy.yml@v4
+    uses: 24dlong/github-actions-library/.github/workflows/terraform-deploy.yml@v5
     permissions:
       id-token: write
       contents: read
@@ -26,6 +26,8 @@ jobs:
       actions: write
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      github-app-client-id: ${{ vars.GH_WORKFLOWS_APP_CLIENT_ID }}
+      github-app-private-key: ${{ secrets.GH_WORKFLOWS_APP_PRIVATE_KEY }}
     with:
       command: plan
       working-directory: infra
