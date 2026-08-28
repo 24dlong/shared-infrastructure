@@ -26,8 +26,8 @@ jobs:
       actions: write
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
-      github-app-client-id: ${{ vars.GH_WORKFLOWS_APP_CLIENT_ID }}
       github-app-private-key: ${{ secrets.GH_WORKFLOWS_APP_PRIVATE_KEY }}
     with:
       command: plan
       working-directory: infra
+      github-app-client-id: ${{ vars.GH_WORKFLOWS_APP_CLIENT_ID }}

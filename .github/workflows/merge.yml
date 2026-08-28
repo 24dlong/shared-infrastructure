@@ -45,5 +45,6 @@ jobs:
         with:
           environment: production
           ref: ${{ needs.publish.outputs.version }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-app-client-id: ${{ vars.GH_WORKFLOWS_APP_CLIENT_ID }}
+          github-app-private-key: ${{ secrets.GH_WORKFLOWS_APP_PRIVATE_KEY }}
           base-branch: main
