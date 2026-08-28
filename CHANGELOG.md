@@ -1,3 +1,8 @@
+## 0.1.5 (2026-08-28)
+
+
+- fix: use built-in token for deployment PR (#25)
+
 ## 0.1.4 (2026-08-28)
 
 
