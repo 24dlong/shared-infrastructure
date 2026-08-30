@@ -16,13 +16,13 @@ lint:
 	mise exec -- pre-commit run --all-files
 
 fmt:
-	@for dir in $(TERRAFORM_DIRS); do \
+	@for dir in $(TERRAFORM_DIRS) environments; do \
 		echo "terraform fmt $$dir"; \
 		(cd $$dir && terraform fmt -recursive); \
 	done
 
 validate:
-	@for dir in $(TERRAFORM_DIRS); do \
+	@for dir in $(TERRAFORM_DIRS) environments; do \
 		echo "terraform validate $$dir"; \
 		(cd $$dir && terraform init -backend=false -input=false >/dev/null && terraform validate); \
 	done
