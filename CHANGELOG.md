@@ -1,3 +1,21 @@
+## 0.1.7 (2026-09-08)
+
+
+- chore(deps): update terraform github.com/24dlong/terraform-modules-library to v0.5.0 (#34)
+- Co-authored-by: 24dlong-renovate[bot] <286791535+24dlong-renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency checkov to v3.3.16 (#33)
+- Co-authored-by: 24dlong-renovate[bot] <286791535+24dlong-renovate[bot]@users.noreply.github.com>
+- chore(deps): update minor-updates (#32)
+- Co-authored-by: 24dlong-renovate[bot] <286791535+24dlong-renovate[bot]@users.noreply.github.com>
+- ci: add environments dir to lint (#31)
+- chore(deps): update minor-updates (#30)
+- Co-authored-by: 24dlong-renovate[bot] <286791535+24dlong-renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency checkov to v3.3.13 (#29)
+- Co-authored-by: 24dlong-renovate[bot] <286791535+24dlong-renovate[bot]@users.noreply.github.com>
+- fix: send proper terraform-deploy inputs (#28)
+- chore(deploy): request production deploy of 35bcb88 (#27)
+- Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
 ## 0.1.6 (2026-08-28)
 
 
