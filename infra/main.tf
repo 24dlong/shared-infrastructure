@@ -143,7 +143,7 @@ data "aws_iam_policy_document" "deployer" {
 }
 
 module "github_oidc" {
-  source = "git::https://github.com/24dlong/terraform-modules-library.git//modules/github-oidc?ref=0.4.0"
+  source = "git::https://github.com/24dlong/terraform-modules-library.git//modules/github-oidc?ref=0.5.0"
 
   name_prefix = var.name_prefix
 
@@ -163,7 +163,7 @@ module "github_oidc" {
 }
 
 module "github_oidc_plan" {
-  source = "git::https://github.com/24dlong/terraform-modules-library.git//modules/github-oidc?ref=0.4.0"
+  source = "git::https://github.com/24dlong/terraform-modules-library.git//modules/github-oidc?ref=0.5.0"
 
   name_prefix = "${var.name_prefix}-plan"
 
