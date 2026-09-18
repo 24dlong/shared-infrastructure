@@ -1,3 +1,15 @@
+## 0.1.8 (2026-09-18)
+
+
+- chore(deps): update minor-updates (#39)
+- Co-authored-by: 24dlong-renovate[bot] <286791535+24dlong-renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency terraform to v1.16.2 (#38)
+- Co-authored-by: 24dlong-renovate[bot] <286791535+24dlong-renovate[bot]@users.noreply.github.com>
+- chore(deps): update pre-commit hook antonbabenko/pre-commit-terraform to v1.109.1 (#37)
+- Co-authored-by: 24dlong-renovate[bot] <286791535+24dlong-renovate[bot]@users.noreply.github.com>
+- chore(deps): update dependency terraform to v1.16.1 (#36)
+- Co-authored-by: 24dlong-renovate[bot] <286791535+24dlong-renovate[bot]@users.noreply.github.com>
+
 ## 0.1.7 (2026-09-08)
 
 
